@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Otbo5 - أطبخ</string>
+    <string name="title_activity_main">Login Page</string>
+    <string name="title_activity_home">Food Categories</string>
+    <string name="title_activity_food_details">تفاصيل الوجبة</string>
+
+    <!--Contact us-->
+    <string name="contact_us_email">support@otbo5.com</string>
+    <string name="contact_us_error_no_email_client">There are no email clients installed</string>
+    <string name="contact_us_email_client_chooser_title">Send email...</string>
+
+</resources>
