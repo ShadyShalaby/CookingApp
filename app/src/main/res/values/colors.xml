@@ -13,4 +13,6 @@
     <color name="black">#000000</color>
     <color name="grey">#f0f3f5</color>
 
+    <color name="bg_drawer">#dddddd</color>
+
 </resources>

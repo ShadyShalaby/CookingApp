@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,12 +19,15 @@ import android.widget.Toast;
 
 import com.demo.cooking.R;
 import com.demo.cooking.adapters.CategoryAdapter;
+import com.demo.cooking.fragments.MenuFragment;
 import com.demo.cooking.models.Category;
 import com.demo.cooking.network.NetworkManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
+import com.mxn.soul.flowingdrawer_core.ElasticDrawer;
+import com.mxn.soul.flowingdrawer_core.FlowingDrawer;
 
 import java.util.ArrayList;
 
@@ -41,11 +45,14 @@ public class HomeActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.recView_categories)
     RecyclerView categoriesRecyclerView;
+    @BindView(R.id.drawerlayout)
+    FlowingDrawer mDrawer;
 
     private Dialog dialog;
 
     public static Intent getIntent(Context context) {
-        return new Intent(context, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        return new Intent(context, HomeActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     }
 
     @Override
@@ -55,13 +62,49 @@ public class HomeActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
+        setupToolbar();
+        setupListAdapter();
+        setupMenu();
+    }
 
+    private void setupMenu() {
+        FragmentManager fm = getSupportFragmentManager();
+        MenuFragment menuFragment = (MenuFragment) fm.findFragmentById(R.id.id_container_menu);
+
+        if (menuFragment == null) {
+            menuFragment = new MenuFragment();
+            fm.beginTransaction().add(R.id.id_container_menu, menuFragment).commit();
+        }
+    }
+
+    private void setupToolbar() {
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_menu_white);
+        mDrawer.setTouchMode(ElasticDrawer.TOUCH_MODE_BEZEL);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawer.toggleMenu();
+            }
+        });
+    }
+
+    private void setupListAdapter() {
         categoryAdapter = new CategoryAdapter(this, categories);
         categoriesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 //        categoriesRecyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
 //        categoriesRecyclerView.setItemAnimator(new DefaultItemAnimator());
         categoriesRecyclerView.setAdapter(categoryAdapter);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawer.isMenuVisible()) {
+            mDrawer.closeMenu();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override

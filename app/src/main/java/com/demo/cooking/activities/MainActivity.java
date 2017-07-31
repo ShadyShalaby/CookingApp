@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -75,11 +76,13 @@ public class MainActivity extends Activity {
                 new FutureCallback<Response<String>>() {
                     @Override
                     public void onCompleted(Exception e, Response<String> result) {
-                        if (e != null)
+                        if (e != null) {
                             Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        else if (result.getHeaders().code() == 401) {
+
+                        } else if (result.getHeaders().code() == 401) {
                             Toast.makeText(MainActivity.this, "Invalid email or password", Toast.LENGTH_LONG).show();
                         } else if (result.getHeaders().code() == 200) {
+                            Log.i(MainActivity.class.getName(), "Login Result " + result.getResult());
                             PreferenceManager.setCustomerData(MainActivity.this, result.getResult());
                             startActivity(HomeActivity.getIntent(MainActivity.this));
                         } else
